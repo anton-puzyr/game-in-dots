@@ -1,0 +1,13 @@
+# dependencies
+node_modules
+
+# environment
+.idea
+
+# misc
+.DS_Store
+.env
+
+# log
+yarn-debug.log*
+yarn-error.log*
