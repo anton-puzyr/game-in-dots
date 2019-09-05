@@ -1,32 +1,33 @@
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-    entry: './src/app/index.js',
-    devtool: 'source-map',
-    module: {
-        rules: [
-            {
-                test: /\.(js|jsx)$/,
-                exclude: /node_modules/,
-                use: [
-                    'babel-loader'
-                ],
-            },
-            {
-                test: /\.(s*)css$/,
-                use: [
-                    'style-loader',
-                    'css-loader',
-                    'sass-loader',
-                    'resolve-url-loader'
-                ],
-            }
+  entry: './src/app/index.js',
+  devtool: 'source-map',
+  module: {
+    rules: [
+      {
+        test: /\.(js|jsx)$/,
+        exclude: /node_modules/,
+        use: [
+          'babel-loader',
+          'eslint-loader'
         ],
-    },
-    plugins: [
-        new HtmlWebPackPlugin({
-            hash: true,
-            template: './public/index.html'
-        })
+      },
+      {
+        test: /\.(s*)css$/,
+        use: [
+          'style-loader',
+          'css-loader',
+          'sass-loader',
+          'resolve-url-loader'
+        ],
+      }
     ],
+  },
+  plugins: [
+    new HtmlWebPackPlugin({
+      hash: true,
+      template: './public/index.html'
+    })
+  ],
 };
