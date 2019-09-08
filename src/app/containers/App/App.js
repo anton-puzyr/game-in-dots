@@ -12,7 +12,7 @@ const { func, object, array } = PropTypes;
 
 class App extends Component {
   state = {
-    gameMode: {},
+    preset: {},
     isPlaying: false,
   };
 
@@ -30,13 +30,13 @@ class App extends Component {
 
     switch (mode) {
     case 'easy':
-      this.setState({ gameMode: easyMode });
+      this.setState({ preset: easyMode });
       break;
     case 'normal':
-      this.setState({ gameMode: normalMode });
+      this.setState({ preset: normalMode });
       break;
     case 'hard':
-      this.setState({ gameMode: hardMode });
+      this.setState({ preset: hardMode });
       break;
     }
   };
