@@ -17,17 +17,38 @@ class App extends Component {
     field: 5,
     isPlaying: false,
     rows: [],
-    coordinates: [],
-    isClicked: false,
+    redCoordinates: [],
+    greenCoordinates: [],
+    uniqCoordinates: [],
     clicks: 0,
   };
 
   componentDidMount() {
     const { dispatch } = this.props;
+    const { field } = this.state;
 
     dispatch(getPresets());
     dispatch(getWinners());
+
+    const uniqCoordinates = this.generateUniqueCoordinates(field);
+
+    this.setState({ uniqCoordinates });
   }
+
+  generateUniqueCoordinates = size => {
+    const coordinates = [];
+
+    for (let i = 0; coordinates.length < Math.pow(size, size); i++) {
+      let col = this.getIndex(0, size);
+      let row = this.getIndex(0, size);
+
+      if (coordinates.filter(e => e !== [row, col])) {
+        coordinates.push([row, col]);
+      }
+    }
+
+    return this.onlyUniqArrayItems(coordinates);
+  };
 
   setPlay = () => this.setState({ isPlaying: true });
 
@@ -51,10 +72,24 @@ class App extends Component {
 
   replaceArrayElement = (arr, index, amount, element) => arr.splice(index, amount, element);
 
+  onlyUniqArrayItems = data => Array.from(new Map(data.map(item => [item.join(), item])).values());
+
+  shuffle = arr => {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+
+    return arr;
+  };
+
+  getRandomArrayIndexes = list => list[Math.floor(Math.random() * list.length)];
+
   generateGrid = () => {
-    const { field, coordinates, isClicked } = this.state;
+    const { field, redCoordinates, greenCoordinates, uniqCoordinates } = this.state;
     let rows = [];
 
+    /* Draw game board */
     for (let i = 0; i < field; i++) {
       let children = [];
 
@@ -69,44 +104,60 @@ class App extends Component {
       );
     }
 
-    const indexSquare = this.getIndex(0, field);
-    const indexRow = this.getIndex(0, field);
+    /* Generate random square indexes */
+    const randomArrayIndexes = this.getRandomArrayIndexes(this.shuffle(uniqCoordinates));
+
+    this.setState({ uniqCoordinates: uniqCoordinates.filter(e => e !== randomArrayIndexes) });
+
+    const indexSquare = this.getIndex(0, 5);
+    const indexRow = this.getIndex(0, 5);
     const item = rows[indexRow].props.children;
 
-    const coordinatesArray = [];
-    coordinatesArray.push(indexRow, indexSquare);
-
     this.setState(prevState => ({
-      coordinates: [...prevState.coordinates, coordinatesArray],
+      redCoordinates: [...prevState.redCoordinates, [indexRow, indexSquare]],
     }));
 
+    /* Set blue square */
     this.replaceArrayElement(
       item,
       indexSquare,
       1,
-      <Square key={indexSquare} className="square-blue" onClick={e => this.handleClick(e)} />,
+      <Square
+        key={indexSquare}
+        className="square-blue"
+        onClick={e => this.handleClick(e, indexRow, indexSquare)}
+      />,
     );
 
-    if (coordinates) {
-      coordinates.forEach(arr =>
-        this.replaceArrayElement(
-          rows[arr[0]].props.children,
-          arr[1],
-          1,
-          <Square key={arr[1]} className={isClicked ? 'square-green' : 'square-red'} />,
-        ),
-      );
-    }
+    /* Map red squares */
+    redCoordinates.forEach(arr =>
+      this.replaceArrayElement(
+        rows[arr[0]].props.children,
+        arr[1],
+        1,
+        <Square key={arr[1]} className="square-red" />,
+      ),
+    );
 
-    this.setState({ rows, isClicked: false });
+    /* Map green squares */
+    greenCoordinates.forEach(arr =>
+      this.replaceArrayElement(
+        rows[arr[0]].props.children,
+        arr[1],
+        1,
+        <Square key={arr[1]} className="square-green" />,
+      ),
+    );
+
+    this.setState({ rows });
   };
 
-  handleClick = event => {
+  handleClick = (event, indexRow, indexSquare) => {
     event.target.className = 'square-green';
 
     this.setState(prevState => ({
+      greenCoordinates: [...prevState.greenCoordinates, [indexRow, indexSquare]],
       clicks: ++prevState.clicks,
-      isClicked: true,
     }));
   };
 
