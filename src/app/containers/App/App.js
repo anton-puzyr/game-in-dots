@@ -17,7 +17,9 @@ class App extends Component {
     field: 5,
     isPlaying: false,
     rows: [],
-    clickedCoordinates: [],
+    coordinates: [],
+    isClicked: false,
+    clicks: 0,
   };
 
   componentDidMount() {
@@ -50,7 +52,7 @@ class App extends Component {
   replaceArrayElement = (arr, index, amount, element) => arr.splice(index, amount, element);
 
   generateGrid = () => {
-    const { field, clickedCoordinates } = this.state;
+    const { field, coordinates, isClicked } = this.state;
     let rows = [];
 
     for (let i = 0; i < field; i++) {
@@ -71,39 +73,40 @@ class App extends Component {
     const indexRow = this.getIndex(0, field);
     const item = rows[indexRow].props.children;
 
+    const coordinatesArray = [];
+    coordinatesArray.push(indexRow, indexSquare);
+
+    this.setState(prevState => ({
+      coordinates: [...prevState.coordinates, coordinatesArray],
+    }));
+
     this.replaceArrayElement(
       item,
       indexSquare,
       1,
-      <Square
-        key={indexSquare}
-        className="square-blue"
-        onClick={e => this.handleClick(e, indexRow, indexSquare)}
-      />,
+      <Square key={indexSquare} className="square-blue" onClick={e => this.handleClick(e)} />,
     );
 
-    if (clickedCoordinates) {
-      clickedCoordinates.forEach(arr =>
+    if (coordinates) {
+      coordinates.forEach(arr =>
         this.replaceArrayElement(
           rows[arr[0]].props.children,
           arr[1],
           1,
-          <Square key={arr[1]} className="square-green" />,
+          <Square key={arr[1]} className={isClicked ? 'square-green' : 'square-red'} />,
         ),
       );
     }
 
-    this.setState({ rows });
+    this.setState({ rows, isClicked: false });
   };
 
-  handleClick = (event, indexRow, indexSquare) => {
+  handleClick = event => {
     event.target.className = 'square-green';
 
-    const coordinates = [];
-    coordinates.push(indexRow, indexSquare);
-
     this.setState(prevState => ({
-      clickedCoordinates: [...prevState.clickedCoordinates, coordinates],
+      clicks: ++prevState.clicks,
+      isClicked: true,
     }));
   };
 
