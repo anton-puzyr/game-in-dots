@@ -6,6 +6,7 @@ import { getPresets, getWinners } from '../../store/actions';
 import ActionBar from '../../components/ActionBar';
 import Board from '../../components/Board';
 import LeaderBoard from '../../components/LeaderBoard';
+import Square from '../../components/Square';
 import './App.scss';
 
 const { func, object, array } = PropTypes;
@@ -13,7 +14,10 @@ const { func, object, array } = PropTypes;
 class App extends Component {
   state = {
     preset: {},
+    field: 5,
     isPlaying: false,
+    rows: [],
+    clickedCoordinates: [],
   };
 
   componentDidMount() {
@@ -41,14 +45,77 @@ class App extends Component {
     }
   };
 
+  getIndex = (min, max) => Math.floor(Math.random() * (max - min)) + min;
+
+  replaceArrayElement = (arr, index, amount, element) => arr.splice(index, amount, element);
+
+  generateGrid = () => {
+    const { field, clickedCoordinates } = this.state;
+    let rows = [];
+
+    for (let i = 0; i < field; i++) {
+      let children = [];
+
+      for (let j = 0; j < field; j++) {
+        children.push(<Square key={j} />);
+      }
+
+      rows.push(
+        <div className="board-row" key={i}>
+          {children}
+        </div>,
+      );
+    }
+
+    const indexSquare = this.getIndex(0, field);
+    const indexRow = this.getIndex(0, field);
+    const item = rows[indexRow].props.children;
+
+    this.replaceArrayElement(
+      item,
+      indexSquare,
+      1,
+      <Square
+        key={indexSquare}
+        className="square-blue"
+        onClick={e => this.handleClick(e, indexRow, indexSquare)}
+      />,
+    );
+
+    if (clickedCoordinates) {
+      clickedCoordinates.forEach(arr =>
+        this.replaceArrayElement(
+          rows[arr[0]].props.children,
+          arr[1],
+          1,
+          <Square key={arr[1]} className="square-green" />,
+        ),
+      );
+    }
+
+    this.setState({ rows });
+  };
+
+  handleClick = (event, indexRow, indexSquare) => {
+    event.target.className = 'square-green';
+
+    const coordinates = [];
+    coordinates.push(indexRow, indexSquare);
+
+    this.setState(prevState => ({
+      clickedCoordinates: [...prevState.clickedCoordinates, coordinates],
+    }));
+  };
+
   render() {
     const { winners } = this.props;
+    const { rows } = this.state;
 
     return (
       <div className="app">
         <div className="board-wrapper">
           <ActionBar setGameMode={this.setGameMode} setPlay={this.setPlay} />
-          <Board />
+          <Board rows={rows} generateGrid={this.generateGrid} />
         </div>
         <LeaderBoard winners={winners} />
       </div>

@@ -10,3 +10,33 @@
     justify-content: center;
   }
 }
+
+.square-green {
+  background: rgb(50, 205, 50);
+  border: 1px solid #ccc;
+  float: left;
+  height: 50px;
+  margin-right: -1px;
+  margin-top: -1px;
+  padding: 0;
+  width: 50px;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.square-red {
+  background: rgb(230, 0, 0);
+  border: 1px solid #ccc;
+  float: left;
+  height: 50px;
+  margin-right: -1px;
+  margin-top: -1px;
+  padding: 0;
+  width: 50px;
+
+  &:focus {
+    outline: none;
+  }
+}
