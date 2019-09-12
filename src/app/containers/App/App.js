@@ -19,36 +19,16 @@ class App extends Component {
     rows: [],
     redCoordinates: [],
     greenCoordinates: [],
-    uniqCoordinates: [],
+    existingCoordinates: [],
     clicks: 0,
   };
 
   componentDidMount() {
     const { dispatch } = this.props;
-    const { field } = this.state;
 
     dispatch(getPresets());
     dispatch(getWinners());
-
-    const uniqCoordinates = this.generateUniqueCoordinates(field);
-
-    this.setState({ uniqCoordinates });
   }
-
-  generateUniqueCoordinates = size => {
-    const coordinates = [];
-
-    for (let i = 0; coordinates.length < Math.pow(size, size); i++) {
-      let col = this.getIndex(0, size);
-      let row = this.getIndex(0, size);
-
-      if (coordinates.filter(e => e !== [row, col])) {
-        coordinates.push([row, col]);
-      }
-    }
-
-    return this.onlyUniqArrayItems(coordinates);
-  };
 
   setPlay = () => this.setState({ isPlaying: true });
 
@@ -86,7 +66,7 @@ class App extends Component {
   getRandomArrayIndexes = list => list[Math.floor(Math.random() * list.length)];
 
   generateGrid = () => {
-    const { field, redCoordinates, greenCoordinates, uniqCoordinates } = this.state;
+    const { field, redCoordinates, greenCoordinates, existingCoordinates } = this.state;
     let rows = [];
 
     /* Draw game board */
@@ -105,10 +85,6 @@ class App extends Component {
     }
 
     /* Generate random square indexes */
-    const randomArrayIndexes = this.getRandomArrayIndexes(this.shuffle(uniqCoordinates));
-
-    this.setState({ uniqCoordinates: uniqCoordinates.filter(e => e !== randomArrayIndexes) });
-
     const indexSquare = this.getIndex(0, 5);
     const indexRow = this.getIndex(0, 5);
     const item = rows[indexRow].props.children;
@@ -163,8 +139,8 @@ class App extends Component {
 
   render() {
     const { winners } = this.props;
-    const { rows } = this.state;
-
+    const { rows, existingCoordinates } = this.state;
+    console.log(existingCoordinates);
     return (
       <div className="app">
         <div className="board-wrapper">

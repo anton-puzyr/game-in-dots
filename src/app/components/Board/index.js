@@ -1,3 +1,3 @@
-import Canvas from './Board';
+import Board from './Board';
 
-export default Canvas;
+export default Board;

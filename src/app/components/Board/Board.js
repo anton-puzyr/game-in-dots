@@ -5,7 +5,7 @@ import './Board.scss';
 
 const { func, array } = PropTypes;
 
-class Game extends Component {
+class Board extends Component {
   componentDidMount() {
     const { generateGrid } = this.props;
 
@@ -18,9 +18,9 @@ class Game extends Component {
   }
 }
 
-Game.propTypes = {
+Board.propTypes = {
   generateGrid: func,
   rows: array,
 };
 
-export default Game;
+export default Board;
