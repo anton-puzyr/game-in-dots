@@ -16,6 +16,7 @@ class App extends Component {
     preset: {},
     field: 5,
     isPlaying: false,
+    playerName: '',
     rows: [],
     coordinates: [],
     redCoordinates: [],
@@ -30,23 +31,26 @@ class App extends Component {
     dispatch(getPresets());
     dispatch(getWinners());
 
-    this.generateIndexes(field);
+    const coordinates = this.generateIndexes(field);
+    this.setState({ coordinates });
   }
 
-  setPlay = () => this.setState({ isPlaying: true });
-
-  setGameMode = mode => {
+  handleSubmit = values => {
     const { easyMode, normalMode, hardMode } = this.props.presets;
+    const {
+      mode: { value },
+      playerName,
+    } = values;
 
-    switch (mode) {
+    switch (value) {
     case 'easy':
-      this.setState({ preset: easyMode });
+      this.setState({ preset: easyMode, isPlaying: true, playerName });
       break;
     case 'normal':
-      this.setState({ preset: normalMode });
+      this.setState({ preset: normalMode, isPlaying: true, playerName });
       break;
     case 'hard':
-      this.setState({ preset: hardMode });
+      this.setState({ preset: hardMode, isPlaying: true, playerName });
       break;
     }
   };
@@ -60,7 +64,7 @@ class App extends Component {
       }
     }
 
-    this.setState({ coordinates });
+    return coordinates;
   };
 
   replaceArrayElement = (arr, index, amount, element) => arr.splice(index, amount, element);
@@ -145,15 +149,13 @@ class App extends Component {
 
   render() {
     const { winners } = this.props;
-    const { rows, coordinates } = this.state;
+    const { rows, isPlaying } = this.state;
 
     return (
       <div className="app">
         <div className="board-wrapper">
-          <ActionBar setGameMode={this.setGameMode} setPlay={this.setPlay} />
-          {coordinates && coordinates.length &&
-            <Board rows={rows} generateGrid={this.generateGrid} />
-          }
+          <ActionBar onSubmit={this.handleSubmit} />
+          {isPlaying && <Board rows={rows} generateGrid={this.generateGrid} />}
         </div>
         <LeaderBoard winners={winners} />
       </div>
@@ -168,8 +170,8 @@ App.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  presets: state.presets,
-  winners: state.winners,
+  presets: state.dotsReducer.presets,
+  winners: state.dotsReducer.winners,
 });
 
 export default connect(mapStateToProps)(App);

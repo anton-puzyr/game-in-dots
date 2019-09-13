@@ -1,0 +1,41 @@
+.input-wrapper {
+  position: relative;
+  width: 250px;
+  margin-left: 18px;
+
+  .input {
+    height: 38px;
+    border: 1px solid #cccccc;
+    border-radius: 2px;
+    line-height: 19px;
+    letter-spacing: 0.2px;
+    font-weight: 600;
+    font-size: 14px;
+    color: #191919;
+    padding: 0 15px;
+    caret-color: #000000;
+    cursor: default;
+    width: 200px;
+
+    &:hover {
+      cursor: default;
+      transition: 0.2s ease-out;
+      border-color: rgb(24, 154, 211);
+    }
+
+    &:focus {
+      cursor: text;
+      outline: none;
+      border-color: rgb(24, 154, 211);
+    }
+
+    &::placeholder {
+      color: #999999;
+    }
+  }
+
+  .error {
+    position: absolute;
+    color: #d30c0a;
+  }
+}

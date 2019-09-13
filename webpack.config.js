@@ -2,7 +2,7 @@ const HtmlWebPackPlugin = require('html-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
 
 module.exports = {
-  entry: './src/app/index.js',
+  entry: './src/app/reducer.js',
   devtool: 'source-map',
   module: {
     rules: [
@@ -14,6 +14,10 @@ module.exports = {
       {
         test: /\.(s*)css$/,
         use: ['style-loader', 'css-loader', 'sass-loader', 'resolve-url-loader'],
+      },
+      {
+        test: /\.svg$/,
+        use: '@svgr/webpack',
       },
     ],
   },

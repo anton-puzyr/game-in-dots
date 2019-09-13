@@ -1,34 +1,45 @@
 import React, { Component } from 'react';
 import * as PropTypes from 'prop-types';
+import { Field, reduxForm } from 'redux-form';
 
+import Button from '../shared/Button';
+import Input from '../shared/Input';
+import Select from '../shared/Select';
+import { required, maxLength20 } from '../shared/validators';
 import './ActionBar.scss';
 
-const { func } = PropTypes;
+const { func, bool } = PropTypes;
 
 class ActionBar extends Component {
   render() {
-    const { setGameMode, setPlay } = this.props;
-    const gameModes = ['Easy', 'Normal', 'Hard'];
+    const { handleSubmit, submitting } = this.props;
+    const options = [
+      { label: 'Easy', value: 'easy' },
+      { label: 'Normal', value: 'normal' },
+      { label: 'Hard', value: 'hard' },
+    ];
 
     return (
-      <div className="action-bar">
-        <select defaultValue="easy" onChange={event => setGameMode(event.target.value)}>
-          <option value="easy" disabled>
-            Pick game mode
-          </option>
-          {gameModes.map((currentValue, index) => {
-            return (
-              <option key={index} value={currentValue.toLowerCase()}>
-                {currentValue}
-              </option>
-            );
-          })}
-        </select>
-        <input type="text" placeholder="Enter your name" />
-        <button type="button" onClick={setPlay}>
-          Play
-        </button>
-      </div>
+      <form onSubmit={handleSubmit}>
+        <div className="action-bar">
+          <Field
+            name="mode"
+            type="text"
+            placeholder="Pick game mode"
+            options={options}
+            component={Select}
+            validate={required}
+          />
+          <Field
+            name="playerName"
+            type="text"
+            placeholder="Enter your name"
+            component={Input}
+            validate={[required, maxLength20]}
+          />
+          <Button type="submit" text="Play" disabled={submitting} />
+        </div>
+      </form>
     );
   }
 }
@@ -36,6 +47,8 @@ class ActionBar extends Component {
 ActionBar.propTypes = {
   setGameMode: func,
   setPlay: func,
+  handleSubmit: func,
+  submitting: bool,
 };
 
-export default ActionBar;
+export default reduxForm({ form: 'action-bar' })(ActionBar);

@@ -1,0 +1,8 @@
+.select {
+  position: relative;
+
+  &__error {
+    color: #d30c0a;
+    position: absolute;
+  }
+}
