@@ -9,6 +9,10 @@
     align-items: center;
     border-right: 1px solid #cccccc;
     padding-right: 50px;
+
+    &__winner {
+      padding: 30px 0;
+    }
   }
 }
 

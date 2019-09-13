@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as PropTypes from 'prop-types';
 
-import { getPresets, getWinners } from '../../store/actions';
+import { getPresets, getWinners, addWinner } from '../../store/actions';
 import ActionBar from '../../components/ActionBar';
 import Board from '../../components/Board';
 import LeaderBoard from '../../components/LeaderBoard';
@@ -22,7 +22,7 @@ class App extends Component {
     coordinates: [],
     redCoordinates: [],
     greenCoordinates: [],
-    clicks: 0,
+    winner: '',
   };
 
   componentDidMount() {
@@ -46,6 +46,8 @@ class App extends Component {
         isPlaying: true,
         playerName,
         coordinates: this.generateIndexes(easyMode.field),
+        redCoordinates: [],
+        greenCoordinates: [],
       });
       break;
     case 'normal':
@@ -54,6 +56,8 @@ class App extends Component {
         isPlaying: true,
         playerName,
         coordinates: this.generateIndexes(normalMode.field),
+        redCoordinates: [],
+        greenCoordinates: [],
       });
       break;
     case 'hard':
@@ -62,9 +66,32 @@ class App extends Component {
         isPlaying: true,
         playerName,
         coordinates: this.generateIndexes(hardMode.field),
+        redCoordinates: [],
+        greenCoordinates: [],
       });
       break;
     }
+  };
+
+  generateDate = () => {
+    const dt = new Date();
+    const year = `${dt.getFullYear()}`;
+    const day = `${dt.getDate()} `;
+    const time = `${dt.getHours()}:${dt.getMinutes()}`;
+    const month = dt.toLocaleString('default', { month: 'long' });
+
+    return `${time} ${day}${month} ${year}`;
+  };
+
+  calculateWinner = () => {
+    const { field, redCoordinates, greenCoordinates, playerName } = this.state;
+    const progress = field * field / 2;
+    const date = this.generateDate();
+    // this.props.dispatch(addWinner({ winner: 'test', date }));
+
+    if (redCoordinates.length > progress && greenCoordinates.length < progress) {
+      this.setState({ winner: 'Computer' });
+    } else if (greenCoordinates.length > progress) this.setState({ winner: playerName });
   };
 
   generateIndexes = size => {
@@ -153,6 +180,8 @@ class App extends Component {
     });
 
     this.setState({ rows, coordinates: coordinatesCopy });
+
+    this.calculateWinner();
   };
 
   handleClick = (event, indexRow, indexSquare) => {
@@ -160,7 +189,6 @@ class App extends Component {
 
     this.setState(prevState => ({
       greenCoordinates: [...prevState.greenCoordinates, [indexRow, indexSquare]],
-      clicks: ++prevState.clicks,
     }));
   };
 
@@ -170,13 +198,16 @@ class App extends Component {
       rows,
       isPlaying,
       preset: { delay },
+      winner,
     } = this.state;
-    console.log(winners);
+
     return (
       <div className="app">
         <div className="board-wrapper">
           <ActionBar onSubmit={this.handleSubmit} />
-          <Message text="Message here" />
+          <div className="board-wrapper__winner">
+            {winner && <Message text={`To win: ${winner}`} />}
+          </div>
           {isPlaying && <Board rows={rows} generateGrid={this.generateGrid} delay={delay} />}
         </div>
         <LeaderBoard winners={winners} />
