@@ -17,17 +17,20 @@ class App extends Component {
     field: 5,
     isPlaying: false,
     rows: [],
+    coordinates: [],
     redCoordinates: [],
     greenCoordinates: [],
-    existingCoordinates: [],
     clicks: 0,
   };
 
   componentDidMount() {
     const { dispatch } = this.props;
+    const { field } = this.state;
 
     dispatch(getPresets());
     dispatch(getWinners());
+
+    this.generateIndexes(field);
   }
 
   setPlay = () => this.setState({ isPlaying: true });
@@ -48,25 +51,24 @@ class App extends Component {
     }
   };
 
-  getIndex = (min, max) => Math.floor(Math.random() * (max - min)) + min;
+  generateIndexes = size => {
+    let coordinates = [];
 
-  replaceArrayElement = (arr, index, amount, element) => arr.splice(index, amount, element);
-
-  onlyUniqArrayItems = data => Array.from(new Map(data.map(item => [item.join(), item])).values());
-
-  shuffle = arr => {
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
+    for (let i = 0; i < size; i++) {
+      for (let j = 0; j < size; j++) {
+        coordinates.push([i, j]);
+      }
     }
 
-    return arr;
+    this.setState({ coordinates });
   };
+
+  replaceArrayElement = (arr, index, amount, element) => arr.splice(index, amount, element);
 
   getRandomArrayIndexes = list => list[Math.floor(Math.random() * list.length)];
 
   generateGrid = () => {
-    const { field, redCoordinates, greenCoordinates, existingCoordinates } = this.state;
+    const { field, coordinates, redCoordinates, greenCoordinates } = this.state;
     let rows = [];
 
     /* Draw game board */
@@ -84,24 +86,22 @@ class App extends Component {
       );
     }
 
-    /* Generate random square indexes */
-    const indexSquare = this.getIndex(0, 5);
-    const indexRow = this.getIndex(0, 5);
-    const item = rows[indexRow].props.children;
+    const indexes = this.getRandomArrayIndexes(coordinates);
+    const item = rows[indexes[0]].props.children;
 
     this.setState(prevState => ({
-      redCoordinates: [...prevState.redCoordinates, [indexRow, indexSquare]],
+      redCoordinates: [...prevState.redCoordinates, [indexes[0], indexes[1]]],
     }));
 
     /* Set blue square */
     this.replaceArrayElement(
       item,
-      indexSquare,
+      indexes[1],
       1,
       <Square
-        key={indexSquare}
+        key={indexes[1]}
         className="square-blue"
-        onClick={e => this.handleClick(e, indexRow, indexSquare)}
+        onClick={e => this.handleClick(e, indexes[0], indexes[1])}
       />,
     );
 
@@ -125,7 +125,13 @@ class App extends Component {
       ),
     );
 
-    this.setState({ rows });
+    let coordinatesCopy = coordinates.slice();
+
+    coordinatesCopy.forEach((value, index) => {
+      if (value === indexes) coordinatesCopy.splice(index, 1);
+    });
+
+    this.setState({ rows, coordinates: coordinatesCopy });
   };
 
   handleClick = (event, indexRow, indexSquare) => {
@@ -139,13 +145,15 @@ class App extends Component {
 
   render() {
     const { winners } = this.props;
-    const { rows, existingCoordinates } = this.state;
-    console.log(existingCoordinates);
+    const { rows, coordinates } = this.state;
+
     return (
       <div className="app">
         <div className="board-wrapper">
           <ActionBar setGameMode={this.setGameMode} setPlay={this.setPlay} />
-          <Board rows={rows} generateGrid={this.generateGrid} />
+          {coordinates && coordinates.length &&
+            <Board rows={rows} generateGrid={this.generateGrid} />
+          }
         </div>
         <LeaderBoard winners={winners} />
       </div>

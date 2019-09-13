@@ -10,7 +10,7 @@ class Board extends Component {
     const { generateGrid } = this.props;
 
     generateGrid();
-    setInterval(() => generateGrid(), 2000);
+    setInterval(() => generateGrid(), 500);
   }
 
   render() {
