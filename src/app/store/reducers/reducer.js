@@ -5,6 +5,9 @@ import {
   GET_WINNERS_SUCCESS,
   GET_PRESETS_ERROR,
   GET_WINNERS_ERROR,
+  ADD_WINNER_PENDING,
+  ADD_WINNER_SUCCESS,
+  ADD_WINNER_ERROR,
 } from '../types';
 
 const initialState = {
@@ -43,6 +46,22 @@ const dotsReducer = (state = initialState, action) => {
       pending: action.pending,
     };
   case GET_WINNERS_ERROR:
+    return {
+      error: action.error,
+      pending: action.pending,
+    };
+  case ADD_WINNER_PENDING:
+    return {
+      ...state,
+      pending: action.pending,
+    };
+  case ADD_WINNER_SUCCESS:
+    return {
+      ...state,
+      winners: [...state.winners, action.data],
+      pending: action.pending,
+    };
+  case ADD_WINNER_ERROR:
     return {
       error: action.error,
       pending: action.pending,

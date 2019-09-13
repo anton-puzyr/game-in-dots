@@ -8,6 +8,9 @@ import {
   GET_WINNERS_PENDING,
   GET_WINNERS_SUCCESS,
   GET_WINNERS_ERROR,
+  ADD_WINNER_PENDING,
+  ADD_WINNER_SUCCESS,
+  ADD_WINNER_ERROR,
 } from '../types';
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
@@ -28,4 +31,13 @@ export const getWinners = () => dispatch => {
     .get('/winners')
     .then(response => dispatch(success(response.data, GET_WINNERS_SUCCESS)))
     .catch(error => dispatch(failure(error, GET_WINNERS_ERROR)));
+};
+
+export const sendWinner = data => dispatch => {
+  dispatch(pending(ADD_WINNER_PENDING));
+
+  return axios
+    .put('/winners', data)
+    .then(response => dispatch(success(response.data, ADD_WINNER_SUCCESS)))
+    .catch(error => dispatch(failure(error, ADD_WINNER_ERROR)));
 };

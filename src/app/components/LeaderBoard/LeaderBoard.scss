@@ -1,5 +1,39 @@
 .leader-board {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   padding-left: 50px;
+  color: #696969;
+
+  h1 {
+    display: flex;
+    margin-top: 0;
+  }
+
+  &__group {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+    height: 40px;
+    border-radius: 2px;
+    background-color: rgba(119, 136, 153, 0.3);
+    padding: 5px 20px;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: rgba(119, 136, 153, 0.5);
+      transition: 0.2s ease-out;
+    }
+
+    .name {
+      min-width: 50px;
+    }
+
+    .date {
+      padding-left: 50px;
+    }
+  }
 }

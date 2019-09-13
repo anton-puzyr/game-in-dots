@@ -7,6 +7,7 @@ import ActionBar from '../../components/ActionBar';
 import Board from '../../components/Board';
 import LeaderBoard from '../../components/LeaderBoard';
 import Square from '../../components/Square';
+import Message from '../../components/shared/Message';
 import './App.scss';
 
 const { func, object, array } = PropTypes;
@@ -26,13 +27,9 @@ class App extends Component {
 
   componentDidMount() {
     const { dispatch } = this.props;
-    const { field } = this.state;
 
     dispatch(getPresets());
     dispatch(getWinners());
-
-    const coordinates = this.generateIndexes(field);
-    this.setState({ coordinates });
   }
 
   handleSubmit = values => {
@@ -44,13 +41,28 @@ class App extends Component {
 
     switch (value) {
     case 'easy':
-      this.setState({ preset: easyMode, isPlaying: true, playerName });
+      this.setState({
+        preset: easyMode,
+        isPlaying: true,
+        playerName,
+        coordinates: this.generateIndexes(easyMode.field),
+      });
       break;
     case 'normal':
-      this.setState({ preset: normalMode, isPlaying: true, playerName });
+      this.setState({
+        preset: normalMode,
+        isPlaying: true,
+        playerName,
+        coordinates: this.generateIndexes(normalMode.field),
+      });
       break;
     case 'hard':
-      this.setState({ preset: hardMode, isPlaying: true, playerName });
+      this.setState({
+        preset: hardMode,
+        isPlaying: true,
+        playerName,
+        coordinates: this.generateIndexes(hardMode.field),
+      });
       break;
     }
   };
@@ -72,7 +84,12 @@ class App extends Component {
   getRandomArrayIndexes = list => list[Math.floor(Math.random() * list.length)];
 
   generateGrid = () => {
-    const { field, coordinates, redCoordinates, greenCoordinates } = this.state;
+    const {
+      preset: { field },
+      redCoordinates,
+      greenCoordinates,
+      coordinates,
+    } = this.state;
     let rows = [];
 
     /* Draw game board */
@@ -149,13 +166,18 @@ class App extends Component {
 
   render() {
     const { winners } = this.props;
-    const { rows, isPlaying } = this.state;
-
+    const {
+      rows,
+      isPlaying,
+      preset: { delay },
+    } = this.state;
+    console.log(winners);
     return (
       <div className="app">
         <div className="board-wrapper">
           <ActionBar onSubmit={this.handleSubmit} />
-          {isPlaying && <Board rows={rows} generateGrid={this.generateGrid} />}
+          <Message text="Message here" />
+          {isPlaying && <Board rows={rows} generateGrid={this.generateGrid} delay={delay} />}
         </div>
         <LeaderBoard winners={winners} />
       </div>
