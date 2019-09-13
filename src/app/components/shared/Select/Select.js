@@ -5,7 +5,7 @@ import CustomSelect from 'react-select';
 import { selectStyles } from './Styles';
 import DropdownIndicator from './DropdownIndicator';
 
-const { string, object, array, bool, func } = PropTypes;
+const { string, object, array, bool } = PropTypes;
 
 class Select extends React.Component {
   state = {
