@@ -47,7 +47,6 @@ export const selectStyles = {
   input: styles => ({
     ...styles,
     color: '#000',
-    fontFamily: 'Open Sans, sans-serif',
     fontWeight: 600,
   }),
   placeholder: (styles, { isFocused }) => ({

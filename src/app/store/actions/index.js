@@ -33,11 +33,11 @@ export const getWinners = () => dispatch => {
     .catch(error => dispatch(failure(error, GET_WINNERS_ERROR)));
 };
 
-export const sendWinner = data => dispatch => {
+export const addWinner = data => dispatch => {
   dispatch(pending(ADD_WINNER_PENDING));
 
   return axios
-    .put('/winners', data)
+    .post('/winners', data)
     .then(response => dispatch(success(response.data, ADD_WINNER_SUCCESS)))
     .catch(error => dispatch(failure(error, ADD_WINNER_ERROR)));
 };

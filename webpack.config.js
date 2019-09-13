@@ -2,7 +2,7 @@ const HtmlWebPackPlugin = require('html-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
 
 module.exports = {
-  entry: './src/app/reducer.js',
+  entry: './src/app/index.js',
   devtool: 'source-map',
   module: {
     rules: [
