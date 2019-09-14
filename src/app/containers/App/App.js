@@ -80,7 +80,7 @@ class App extends Component {
     const time = `${dt.getHours()}:${dt.getMinutes()}`;
     const month = dt.toLocaleString('default', { month: 'long' });
 
-    return `${time} ${day}${month} ${year}`;
+    return `${time}; ${day}${month} ${year}`;
   };
 
   calculateWinner = () => {
@@ -205,9 +205,7 @@ class App extends Component {
       <div className="app">
         <div className="board-wrapper">
           <ActionBar onSubmit={this.handleSubmit} />
-          <div className="board-wrapper__winner">
-            {winner && <Message text={`To win: ${winner}`} />}
-          </div>
+          <div className="board-wrapper__winner">{winner && <Message text={winner} />}</div>
           {isPlaying && <Board rows={rows} generateGrid={this.generateGrid} delay={delay} />}
         </div>
         <LeaderBoard winners={winners} />

@@ -5,9 +5,7 @@ import CustomSelect from 'react-select';
 import { selectStyles } from './Styles';
 import DropdownIndicator from './DropdownIndicator';
 
-import './Select.scss';
-
-const { string, object, array, bool, func } = PropTypes;
+const { string, object, array, bool } = PropTypes;
 
 class Select extends React.Component {
   state = {
@@ -35,7 +33,7 @@ class Select extends React.Component {
           onBlur={() => input.onBlur(input.value)}
           styles={selectStyles}
         />
-        {touched && error && <div className="select__error">{error}</div>}
+        {touched && error && <div className="error">{error}</div>}
       </div>
     );
   }
