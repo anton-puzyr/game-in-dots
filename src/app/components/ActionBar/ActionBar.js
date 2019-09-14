@@ -5,7 +5,7 @@ import { Field, reduxForm } from 'redux-form';
 import Button from '../shared/Button';
 import Input from '../shared/Input';
 import Select from '../shared/Select';
-import { required, maxLength20 } from '../shared/validators';
+import { required, maxLength15 } from '../shared/validators';
 import './ActionBar.scss';
 
 const { func, bool } = PropTypes;
@@ -35,7 +35,7 @@ class ActionBar extends Component {
             type="text"
             placeholder="Enter your name"
             component={Input}
-            validate={[required, maxLength20]}
+            validate={[required, maxLength15]}
           />
           <Button type="submit" text="Play" disabled={submitting} />
         </div>

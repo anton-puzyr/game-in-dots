@@ -39,12 +39,12 @@ class App extends Component {
       playerName,
     } = values;
 
+    this.setState({ playerName, isPlaying: true });
+
     switch (value) {
     case 'easy':
       this.setState({
         preset: easyMode,
-        isPlaying: true,
-        playerName,
         coordinates: this.generateIndexes(easyMode.field),
         redCoordinates: [],
         greenCoordinates: [],
@@ -53,8 +53,6 @@ class App extends Component {
     case 'normal':
       this.setState({
         preset: normalMode,
-        isPlaying: true,
-        playerName,
         coordinates: this.generateIndexes(normalMode.field),
         redCoordinates: [],
         greenCoordinates: [],
@@ -63,8 +61,6 @@ class App extends Component {
     case 'hard':
       this.setState({
         preset: hardMode,
-        isPlaying: true,
-        playerName,
         coordinates: this.generateIndexes(hardMode.field),
         redCoordinates: [],
         greenCoordinates: [],
