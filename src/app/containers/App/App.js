@@ -15,7 +15,6 @@ const { func, object, array } = PropTypes;
 class App extends Component {
   state = {
     preset: {},
-    field: 5,
     isPlaying: false,
     playerName: '',
     rows: [],
@@ -83,17 +82,18 @@ class App extends Component {
     const { field, redCoordinates, greenCoordinates, playerName } = this.state;
     const progress = field * field / 2;
 
-    if (redCoordinates.length > progress && greenCoordinates.length < progress) {
+    if (redCoordinates.length > progress) {
       this.setState({ winner: 'Computer' });
-    } else if (greenCoordinates.length > progress) this.setState({ winner: playerName });
+    } else if (greenCoordinates.length > progress) {
+      this.setState({ winner: playerName });
+    }
   };
 
-  sendWinnder = () => {
+  sendWinner = name => {
     const { dispatch } = this.props;
-    const { winner } = this.state;
     const date = this.generateDate();
 
-    dispatch(addWinner({ winner, date }));
+    dispatch(addWinner({ winner: name, date }));
   };
 
   generateIndexes = size => {
@@ -112,20 +112,14 @@ class App extends Component {
 
   getRandomArrayIndexes = list => list[Math.floor(Math.random() * list.length)];
 
-  generateGrid = () => {
-    const {
-      preset: { field },
-      redCoordinates,
-      greenCoordinates,
-      coordinates,
-    } = this.state;
+  drawGameBoard = size => {
+    const { coordinates } = this.state;
     let rows = [];
 
-    /* Draw game board */
-    for (let i = 0; i < field; i++) {
+    for (let i = 0; i < size; i++) {
       let children = [];
 
-      for (let j = 0; j < field; j++) {
+      for (let j = 0; j < size; j++) {
         children.push(<Square key={j} />);
       }
 
@@ -137,13 +131,34 @@ class App extends Component {
     }
 
     const indexes = this.getRandomArrayIndexes(coordinates);
+    this.updateCoordinates(indexes);
+
+    indexes && this.replaceSquares(rows, indexes);
+  };
+
+  updateCoordinates = indexes => {
+    const { coordinates } = this.state;
+    let coordinatesCopy = coordinates.slice();
+
+    coordinatesCopy.forEach((value, index) => {
+      if (value === indexes) coordinatesCopy.splice(index, 1);
+    });
+
+    this.setState({ coordinates: coordinatesCopy });
+  };
+
+  replaceSquares = (rows, indexes) => {
+    const { redCoordinates, greenCoordinates } = this.state;
     const item = rows[indexes[0]].props.children;
 
-    this.setState(prevState => ({
-      redCoordinates: [...prevState.redCoordinates, [indexes[0], indexes[1]]],
-    }));
+    this.setState(
+      prevState => ({
+        redCoordinates: [...prevState.redCoordinates, [indexes[0], indexes[1]]],
+      }),
+      () => console.log(this.state.redCoordinates),
+    );
 
-    /* Set blue square */
+    /** Set blue squares */
     this.replaceArrayElement(
       item,
       indexes[1],
@@ -155,35 +170,29 @@ class App extends Component {
       />,
     );
 
-    /* Map red squares */
-    redCoordinates.forEach(arr =>
+    /** Set red squares */
+    redCoordinates.forEach(arr => {
+      console.log(arr, 'replaced red');
       this.replaceArrayElement(
         rows[arr[0]].props.children,
         arr[1],
         1,
         <Square key={arr[1]} className="square-red" />,
-      ),
-    );
+      );
+    });
 
-    /* Map green squares */
-    greenCoordinates.forEach(arr =>
+    /** Set green squares */
+    greenCoordinates.forEach(arr => {
+      console.log(arr, 'replaced green');
       this.replaceArrayElement(
         rows[arr[0]].props.children,
         arr[1],
         1,
         <Square key={arr[1]} className="square-green" />,
-      ),
-    );
-
-    let coordinatesCopy = coordinates.slice();
-
-    coordinatesCopy.forEach((value, index) => {
-      if (value === indexes) coordinatesCopy.splice(index, 1);
+      );
     });
 
-    this.setState({ rows, coordinates: coordinatesCopy });
-
-    this.calculateWinner();
+    this.setState({ rows });
   };
 
   handleClick = (event, indexRow, indexSquare) => {
@@ -196,19 +205,14 @@ class App extends Component {
 
   render() {
     const { winners } = this.props;
-    const {
-      rows,
-      isPlaying,
-      preset: { delay },
-      winner,
-    } = this.state;
+    const { rows, isPlaying, preset, winner } = this.state;
 
     return (
       <div className="app">
         <div className="board-wrapper">
           <ActionBar onSubmit={this.handleSubmit} />
           <div className="board-wrapper__winner">{winner && <Message text={winner} />}</div>
-          {isPlaying && <Board rows={rows} generateGrid={this.generateGrid} delay={delay} />}
+          {isPlaying && <Board rows={rows} drawGameBoard={this.drawGameBoard} preset={preset} />}
         </div>
         <LeaderBoard winners={winners} />
       </div>

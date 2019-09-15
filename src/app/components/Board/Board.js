@@ -3,14 +3,17 @@ import * as PropTypes from 'prop-types';
 
 import './Board.scss';
 
-const { func, array, number } = PropTypes;
+const { func, array, object } = PropTypes;
 
 class Board extends Component {
   componentDidMount() {
-    const { generateGrid, delay } = this.props;
+    const {
+      drawGameBoard,
+      preset: { field, delay },
+    } = this.props;
 
-    generateGrid();
-    setInterval(() => generateGrid(), delay);
+    drawGameBoard(field);
+    setInterval(() => drawGameBoard(field), 500);
   }
 
   render() {
@@ -19,9 +22,9 @@ class Board extends Component {
 }
 
 Board.propTypes = {
-  generateGrid: func,
+  drawGameBoard: func,
   rows: array,
-  delay: number,
+  preset: object,
 };
 
 export default Board;
