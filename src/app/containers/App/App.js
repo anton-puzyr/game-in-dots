@@ -82,12 +82,18 @@ class App extends Component {
   calculateWinner = () => {
     const { field, redCoordinates, greenCoordinates, playerName } = this.state;
     const progress = field * field / 2;
-    const date = this.generateDate();
-    // this.props.dispatch(addWinner({ winner: 'test', date }));
 
     if (redCoordinates.length > progress && greenCoordinates.length < progress) {
       this.setState({ winner: 'Computer' });
     } else if (greenCoordinates.length > progress) this.setState({ winner: playerName });
+  };
+
+  sendWinnder = () => {
+    const { dispatch } = this.props;
+    const { winner } = this.state;
+    const date = this.generateDate();
+
+    dispatch(addWinner({ winner, date }));
   };
 
   generateIndexes = size => {
