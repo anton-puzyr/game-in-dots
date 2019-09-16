@@ -9,8 +9,8 @@ class LeaderBoard extends Component {
   generateLeaderBoard = data => {
     const sanitizedData = this.sanitizeData(data);
 
-    return sanitizedData.map((value, index) =>
-      <div key={index} className="leader-board__group">
+    return sanitizedData.map(value =>
+      <div key={value.id} className="leader-board__group">
         <div className="name">{value.winner}</div>
         <div className="date">{value.date}</div>
       </div>

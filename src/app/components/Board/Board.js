@@ -3,7 +3,7 @@ import * as PropTypes from 'prop-types';
 
 import './Board.scss';
 
-const { func, array, object } = PropTypes;
+const { func, array, object, string } = PropTypes;
 
 class Board extends Component {
   componentDidMount() {
@@ -13,11 +13,13 @@ class Board extends Component {
     } = this.props;
 
     drawGameBoard(field);
-    setInterval(() => drawGameBoard(field), 500);
+    setInterval(() => drawGameBoard(field), delay);
   }
 
   render() {
-    return <div className="board">{this.props.rows}</div>;
+    const { winner, rows } = this.props;
+
+    return <div className={winner ? 'board-hover' : 'board'}>{rows}</div>;
   }
 }
 
@@ -25,6 +27,7 @@ Board.propTypes = {
   drawGameBoard: func,
   rows: array,
   preset: object,
+  winner: string,
 };
 
 export default Board;

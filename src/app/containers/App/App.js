@@ -38,31 +38,31 @@ class App extends Component {
       playerName,
     } = values;
 
-    this.setState({ playerName, isPlaying: true });
+    this.setState({
+      playerName,
+      isPlaying: true,
+      winner: '',
+      redCoordinates: [],
+      greenCoordinates: [],
+    });
 
     switch (value) {
     case 'easy':
       this.setState({
         preset: easyMode,
         coordinates: this.generateIndexes(easyMode.field),
-        redCoordinates: [],
-        greenCoordinates: [],
       });
       break;
     case 'normal':
       this.setState({
         preset: normalMode,
         coordinates: this.generateIndexes(normalMode.field),
-        redCoordinates: [],
-        greenCoordinates: [],
       });
       break;
     case 'hard':
       this.setState({
         preset: hardMode,
         coordinates: this.generateIndexes(hardMode.field),
-        redCoordinates: [],
-        greenCoordinates: [],
       });
       break;
     }
@@ -79,7 +79,12 @@ class App extends Component {
   };
 
   calculateWinner = () => {
-    const { field, redCoordinates, greenCoordinates, playerName } = this.state;
+    const {
+      preset: { field },
+      redCoordinates,
+      greenCoordinates,
+      playerName,
+    } = this.state;
     const progress = field * field / 2;
 
     if (redCoordinates.length > progress) {
@@ -113,7 +118,7 @@ class App extends Component {
   getRandomArrayIndexes = list => list[Math.floor(Math.random() * list.length)];
 
   drawGameBoard = size => {
-    const { coordinates } = this.state;
+    const { coordinates, winner } = this.state;
     let rows = [];
 
     for (let i = 0; i < size; i++) {
@@ -130,35 +135,28 @@ class App extends Component {
       );
     }
 
-    const indexes = this.getRandomArrayIndexes(coordinates);
+    let indexes = this.getRandomArrayIndexes(coordinates);
     this.updateCoordinates(indexes);
 
-    indexes && this.replaceSquares(rows, indexes);
+    !winner && this.replaceSquares(rows, indexes);
   };
 
   updateCoordinates = indexes => {
     const { coordinates } = this.state;
-    let coordinatesCopy = coordinates.slice();
+    let updated = coordinates.filter(el => el !== indexes);
 
-    coordinatesCopy.forEach((value, index) => {
-      if (value === indexes) coordinatesCopy.splice(index, 1);
-    });
-
-    this.setState({ coordinates: coordinatesCopy });
+    this.setState({ coordinates: updated });
   };
 
   replaceSquares = (rows, indexes) => {
     const { redCoordinates, greenCoordinates } = this.state;
     const item = rows[indexes[0]].props.children;
 
-    this.setState(
-      prevState => ({
-        redCoordinates: [...prevState.redCoordinates, [indexes[0], indexes[1]]],
-      }),
-      () => console.log(this.state.redCoordinates),
-    );
+    this.setState(prevState => ({
+      redCoordinates: [...prevState.redCoordinates, indexes],
+    }));
 
-    /** Set blue squares */
+    /** Set blue square */
     this.replaceArrayElement(
       item,
       indexes[1],
@@ -171,26 +169,24 @@ class App extends Component {
     );
 
     /** Set red squares */
-    redCoordinates.forEach(arr => {
-      console.log(arr, 'replaced red');
+    redCoordinates.forEach(arr =>
       this.replaceArrayElement(
         rows[arr[0]].props.children,
         arr[1],
         1,
         <Square key={arr[1]} className="square-red" />,
-      );
-    });
+      ),
+    );
 
     /** Set green squares */
-    greenCoordinates.forEach(arr => {
-      console.log(arr, 'replaced green');
+    greenCoordinates.forEach(arr =>
       this.replaceArrayElement(
         rows[arr[0]].props.children,
         arr[1],
         1,
         <Square key={arr[1]} className="square-green" />,
-      );
-    });
+      ),
+    );
 
     this.setState({ rows });
   };
@@ -212,7 +208,9 @@ class App extends Component {
         <div className="board-wrapper">
           <ActionBar onSubmit={this.handleSubmit} />
           <div className="board-wrapper__winner">{winner && <Message text={winner} />}</div>
-          {isPlaying && <Board rows={rows} drawGameBoard={this.drawGameBoard} preset={preset} />}
+          {isPlaying &&
+            <Board winner={winner} rows={rows} drawGameBoard={this.drawGameBoard} preset={preset} />
+          }
         </div>
         <LeaderBoard winners={winners} />
       </div>
