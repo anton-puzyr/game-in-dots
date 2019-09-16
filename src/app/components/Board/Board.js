@@ -3,25 +3,31 @@ import * as PropTypes from 'prop-types';
 
 import './Board.scss';
 
-const { func, array, number } = PropTypes;
+const { func, array, object, string } = PropTypes;
 
 class Board extends Component {
   componentDidMount() {
-    const { generateGrid, delay } = this.props;
+    const {
+      drawGameBoard,
+      preset: { field, delay },
+    } = this.props;
 
-    generateGrid();
-    setInterval(() => generateGrid(), delay);
+    drawGameBoard(field);
+    setInterval(() => drawGameBoard(field), delay);
   }
 
   render() {
-    return <div className="board">{this.props.rows}</div>;
+    const { winner, rows } = this.props;
+
+    return <div className={winner ? 'board-hover' : 'board'}>{rows}</div>;
   }
 }
 
 Board.propTypes = {
-  generateGrid: func,
+  drawGameBoard: func,
   rows: array,
-  delay: number,
+  preset: object,
+  winner: string,
 };
 
 export default Board;
